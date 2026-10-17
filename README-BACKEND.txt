@@ -1,4 +1,4 @@
-KAVIRAJ TRANSPORT CORPORATION — DEMO PWA
+Delhi TRANSPORT CORPORATION — DEMO PWA
 
 5-HOUR TRANSACTION RETENTION
 - A demo transaction is saved to browser storage immediately when Click Here opens the order summary.
