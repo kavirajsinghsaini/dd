@@ -1,9 +1,9 @@
-KAVIRAJ TRANSPORT CORPORATION PWA — GITHUB PAGES
+Delhi TRANSPORT CORPORATION PWA — GITHUB PAGES
 
 UPLOAD ALL FILES IN THIS FOLDER TO THE ROOT OF YOUR repository named delhibus.
 Keep index.html, manifest.webmanifest, sw.js, icon-192.png and icon-512.png together.
 Then open Settings > Pages > Deploy from a branch > main > /(root) > Save.
-Site URL: https://kavirajsinghsaini.github.io/delhibus/
+Site URL: https://Delhisinghsaini.github.io/delhibus/
 
 DATE-BASED TICKET PNG FILES:
 Put your own ticket images in this same root folder and name them DDMM.png, e.g. 1710.png for 17 October, 1810.png for 18 October, 0511.png for 5 November.
