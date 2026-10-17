@@ -1,0 +1,716 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#202c33">
+<link rel="manifest" href="./manifest.webmanifest">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Delhi Transport">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="apple-touch-icon" href="./icon-192.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Delhi Transport Corporation — Chat Simulator</title>
+<style>
+:root{--bg:#0b141a;--header:#202c33;--incoming:#202c33;--outgoing:#005c4b;--green:#00a884;--text:#e9edef;--muted:#aebac1;--line:#303d45}
+*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;background:#111b21;color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;scrollbar-width:none}html::-webkit-scrollbar,body::-webkit-scrollbar{display:none;width:0;height:0}body{display:block;overflow:hidden}
+.app{height:100dvh;width:100vw;max-width:none;display:flex;flex-direction:column;background:var(--bg);position:relative;overflow:hidden}
+.header{height:59px;flex:0 0 59px;background:var(--header);display:flex;align-items:center;gap:10px;padding:0 12px;z-index:2}
+.back{font-size:25px;line-height:1;color:#d5dcdf}.avatar{height:38px;width:38px;flex:0 0 38px;border-radius:50%;background:#f5f6f6;color:#17415b;display:grid;place-items:center;overflow:hidden;font-size:12px;font-weight:800}.avatar img{width:100%;height:100%;object-fit:cover}.avatar{position:relative}.headtext{min-width:0;flex:1}.name{font-weight:600;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.verified{display:inline-grid;place-items:center;background:#53bdeb;color:#092b39;width:13px;height:13px;border-radius:50%;font-size:9px;margin-left:3px;vertical-align:1px}.sub{font-size:11px;color:#b4c0c6;margin-top:3px}.headicons{font-size:21px;display:flex;gap:18px;align-items:center}
+.chat{flex:1;overflow-y:auto;scrollbar-width:none;-ms-overflow-style:none;scroll-behavior:smooth;padding:12px 9px 14px;background-color:#0b141a;background-image:url("data:image/svg+xml,%3Csvg width='180' height='180' viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%231b2a32' stroke-width='1.3' opacity='.85'%3E%3Ccircle cx='28' cy='27' r='12'/%3E%3Cpath d='M20 27h16M28 19v16M88 17l7 12H81zM135 34q12-14 22 0t-11 15q-15-2-11-15zM25 105l18-8 8 17-17 8zM92 95q15-17 23 0l-11 15zM84 145h25m-12-12v25M4 65q10-13 19 0t-10 12zM143 140q11-13 21 0t-10 12z'/%3E%3C/g%3E%3C/svg%3E")}
+.chat::-webkit-scrollbar{display:none;width:0;height:0}.datepill{margin:2px auto 13px;width:max-content;border-radius:7px;background:#182229;color:#d5dcdf;font-size:11px;padding:6px 12px;font-weight:500;text-transform:capitalize}
+.row{display:flex;margin:6px 0}.row.in{justify-content:flex-start}.row.out{justify-content:flex-end}
+.bubble{max-width:88%;min-width:78px;background:var(--incoming);border-radius:8px;padding:7px 8px 5px;font-size:12.5px;line-height:1.38;overflow-wrap:anywhere;box-shadow:0 1px 1px #0003}
+.in .bubble{border-top-left-radius:0}
+.out .bubble{background:var(--outgoing);border-top-right-radius:0}
+.bubble.ticket-bubble{padding:0;overflow:hidden;border-radius:8px;border-top-left-radius:0;width:100%;max-width:320px}
+.ticket-img-box{width:100%;background:#ffffff;margin:0;padding:0;cursor:pointer;position:relative}
+.ticket-img-box img{width:100%;height:auto;display:block;margin:0;padding:0;border:0;object-fit:cover}
+.ticket-body{padding:10px 10px 6px 10px}
+.meta{display:flex;justify-content:flex-end;align-items:center;gap:4px;color:#aebac1;font-size:9px;margin-top:4px;line-height:11px;padding-right:4px}
+.ticks{color:#53bdeb;letter-spacing:-3px;font-size:12px;padding-right:2px}
+.options{display:flex;gap:6px;margin-top:8px}
+.option{flex:1;border:0;border-radius:6px;background:#252f34;color:#00d989;padding:9px 10px;text-align:center;font-size:13px;font-weight:500;cursor:pointer}
+.option:hover{background:#304047}.options.vertical{display:flex;flex-direction:column;gap:0;margin-top:8px;border-top:1px solid #303d45}.options.vertical .option{width:100%;border-radius:0;border-bottom:1px solid #303d45;background:transparent;color:#86979d;padding:12px 8px;font-size:13px}.options.vertical .option:last-child{border-bottom:0}.options.vertical .option:nth-child(2){color:#25d366}.options.vertical .option:hover{background:#26343b}
+.option.primary{width:100%;background:#202c33;color:#53bdeb;font-weight:600;border-radius:6px;padding:10px;border:1px solid #2f3b43}
+.option.primary:hover{background:#2a3942}
+.option.selected,.option.selected:hover{background:#394348!important;color:#9aa5aa!important;border-color:#394348!important;cursor:default;}
+.card{background:#1b2226;border-radius:5px;margin-top:5px;overflow:hidden}.cardhead{font-size:11px;color:#34d9ba;font-weight:700;padding:8px;background:#202c33}.cardbody{padding:8px}.orderid{font-size:9px;letter-spacing:.7px;color:#b4c0c6;padding-bottom:7px;border-bottom:1px dashed #3b464c}.item{margin:8px 0 5px;font-weight:600}.line{display:flex;justify-content:space-between;gap:8px;margin:6px 0;font-size:12px}.line span{color:#d2d9dc}.total{border-top:1px dashed #3b464c;padding-top:7px;margin-top:8px}.route{font-size:12px;margin:8px 0 0}
+.linkbtn{border-top:1px solid #344047;padding:10px;text-align:center;color:#00d989;font-size:13px;font-weight:600;cursor:pointer;background:#202c33}
+.linkbtn:hover{background:#26353d}
+.validation-quote{display:flex;gap:8px;align-items:stretch;background:#104b3b;border-left:3px solid #35c9b5;border-radius:4px;padding:6px;margin:0 0 7px;min-width:220px}
+.validation-quote-copy{flex:1;min-width:0;font-size:11px;color:#c4d8d2;line-height:1.35}
+.validation-quote-title{font-size:11px;color:#34d9ba;font-weight:700;margin-bottom:4px}
+.validation-quote-caption{font-size:11px;color:#d5e4df}
+.validation-quote img{width:52px;height:58px;object-fit:cover;background:#fff;border-radius:2px;flex:0 0 52px}
+.smallcard{background:#1b2226;padding:8px;border-left:3px solid #00a884;border-radius:5px;margin:5px 0 7px}.smallcard .minihead{font-size:11px;color:#34d9ba;margin-bottom:4px;font-weight:600}.smallcard .minitext{font-size:11px;color:#b7c4c9}
+.notice{font-size:12.5px;line-height:1.45}.notice strong{display:inline;margin:0}
+.typing{display:flex;gap:4px;padding:4px 2px}.typing i{width:5px;height:5px;border-radius:50%;background:#b0bec5;animation:blink 1s infinite}.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}@keyframes blink{0%,60%,100%{opacity:.3;transform:translateY(0)}30%{opacity:1;transform:translateY(-3px)}}
+.composer{display:flex;gap:8px;align-items:center;padding:7px 8px calc(7px + env(safe-area-inset-bottom));background:#202c33;min-height:54px}.composeicon{border:0;background:none;color:#d1d9dd;font-size:21px;padding:2px}.inputwrap{background:#2a3942;border-radius:22px;display:flex;align-items:center;min-width:0;flex:1;padding:0 12px;height:38px}.inputwrap input{border:0;outline:0;background:transparent;color:#e9edef;width:100%;font-size:14px}.inputwrap input::placeholder{color:#9eabb1}.send{height:38px;width:38px;flex:0 0 38px;border:0;border-radius:50%;background:#00a884;color:#06352c;font-size:17px;cursor:pointer}
+.settings{position:absolute;z-index:8;inset:7% 4% auto auto;width:92%;max-height:86%;overflow:auto;background:#202c33;border:1px solid #40505a;border-radius:12px;padding:14px;box-shadow:0 12px 35px #000a;display:none}.settings.open{display:block}.settings h3{margin:0 0 5px;font-size:16px}.settings p{font-size:11px;color:#aebac1;line-height:1.4}.field{display:flex;flex-direction:column;gap:4px;margin:10px 0}.field label{font-size:11px;color:#c2cbd0}.field input,.field textarea{background:#111b21;border:1px solid #3b4a52;color:#e9edef;padding:9px;border-radius:6px;font-size:12px;width:100%}.settingrow{display:flex;gap:8px}.settingrow .field{flex:1;min-width:0}.save{background:#00a884;color:#06352c;border:0;border-radius:6px;padding:10px 14px;font-weight:700;cursor:pointer}.close{float:right;background:transparent;border:0;color:#fff;font-size:21px;cursor:pointer}.toast{position:absolute;bottom:65px;left:50%;transform:translateX(-50%);background:#26363e;border:1px solid #43535c;border-radius:18px;padding:8px 12px;font-size:11px;white-space:nowrap;z-index:10}
+
+/* WhatsApp Real Pop-up Fullscreen Viewer */
+.media-modal{position:fixed;inset:0;background:#0b141a;z-index:99;display:none;flex-direction:column;align-items:center;justify-content:center}
+.media-modal.open{display:flex}
+.media-bar{position:absolute;top:0;left:0;right:0;height:60px;background:linear-gradient(to bottom,#0009,transparent);display:flex;align-items:center;justify-content:space-between;padding:0 15px;z-index:100}
+.media-bar button{background:none;border:0;color:#fff;font-size:26px;cursor:pointer}
+.media-content{width:100%;height:100%;display:flex;align-items:center;justify-content:center;padding:20px}
+.media-content img{max-width:100%;max-height:85vh;object-fit:contain;box-shadow:0 5px 25px #000}
+
+@media(min-width:700px){.app{height:100dvh;width:100vw;max-width:none;box-shadow:none}.chat{padding-left:14px;padding-right:14px}}
+
+/* Profile/contact details screen inspired by WhatsApp Business */
+.headback,.headicons button,.headtext,.avatar.profile-open{border:0;background:transparent;color:inherit;cursor:pointer;padding:0}
+.headback{font-size:28px;line-height:1;width:18px;flex:0 0 18px;color:#d5dcdf}
+.headtext{text-align:left;overflow:hidden}
+.headicons{gap:15px}.headicons button{font-size:19px;line-height:1;color:#d5dcdf;padding:2px}
+.profile-screen{position:fixed;inset:0;z-index:60;background:#0b141a;color:#e9edef;overflow-y:auto;display:none;scrollbar-width:none;padding-bottom:25px}
+.profile-screen::-webkit-scrollbar{display:none}.profile-screen.open{display:block}
+.profile-topbar{height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 17px;position:sticky;top:0;background:#0b141a;z-index:2}
+.profile-topbar button{border:0;background:transparent;color:#e9edef;font-size:29px;cursor:pointer;padding:0 3px}
+.profile-hero{display:flex;flex-direction:column;align-items:center;text-align:center;padding:25px 18px 22px;border-bottom:1px solid #172127}
+.profile-logo{width:104px;height:104px;border-radius:50%;background:#f1f3f4;color:#15252b;display:grid;place-items:center;font-weight:800;font-size:25px;overflow:hidden;cursor:pointer;margin:5px 0 22px}
+.profile-logo img{width:100%;height:100%;object-fit:cover}.profile-hero h1{font-size:21px;line-height:1.25;font-weight:400;margin:0 0 3px;max-width:100%;overflow-wrap:anywhere}.profile-verified{width:17px;height:17px;font-size:11px;vertical-align:2px}.profile-phone{font-size:15px;color:#aebac1;margin-top:2px}.share-btn{margin-top:19px;width:58px;height:48px;border:0;border-radius:25px;background:#202c33;color:#dce4e8;font-size:25px}.share-label{font-size:11px;margin-top:5px;color:#dce4e8}
+.profile-list{border-bottom:1px solid #172127;padding:4px 0}.profile-item{display:flex;gap:24px;align-items:center;min-height:60px;padding:12px 17px;font-size:14px}.profile-symbol{width:27px;flex:0 0 27px;text-align:center;font-size:20px;color:#86949b}.profile-item small{display:block;font-size:12px;line-height:1.45;color:#86949b;margin-top:2px}.profile-item a{color:#25d366;text-decoration:none}.media-section{padding:18px 15px 10px;border-bottom:1px solid #172127}.media-heading{display:flex;justify-content:space-between;align-items:center;color:#9ba7ad;font-size:12px;margin-bottom:15px}.media-gallery{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none}.media-gallery::-webkit-scrollbar{display:none}.media-gallery img{width:92px;height:92px;object-fit:cover;border-radius:6px;background:#fff;flex:0 0 92px;cursor:pointer}.profile-extra{padding-top:5px;padding-bottom:5px}.profile-flex{display:flex;justify-content:space-between;align-items:center;gap:10px;flex:1}.profile-toggle{width:46px;height:27px;border:2px solid #6c777d;border-radius:20px;background:transparent;position:relative;flex:0 0 46px}.profile-toggle:before{content:'';position:absolute;left:3px;top:3px;width:17px;height:17px;border-radius:50%;background:#6c777d}.profile-toggle.on{background:#075e54;border-color:#075e54}.profile-toggle.on:before{left:22px;background:#d9fdd3}.profile-section-label{padding:18px 15px 4px;color:#849198;font-size:12px}.profile-action{min-height:55px}.profile-green{width:35px;height:35px;display:grid;place-items:center;border-radius:50%;background:#00a884;color:#052e27;font-size:18px;flex:0 0 35px}.profile-danger{color:#f15c6d;min-height:55px}.profile-danger span{width:27px;flex:0 0 27px;text-align:center;font-size:20px}
+@media(min-width:700px){.profile-screen{max-width:560px;left:50%;transform:translateX(-50%);box-shadow:0 0 0 100vmax #0008}.profile-hero{padding-top:32px}}
+
+
+/* Screenshot-matched WhatsApp-style mobile layout refinement */
+:root{--bg:#0b141a;--header:#0b141a;--incoming:#202c33;--outgoing:#005c4b;--green:#25d366;--text:#e9edef;--muted:#aebac1;--line:#303d45}
+html,body{background:#0b141a}
+.app{background:#0b141a}
+.header{height:64px;flex-basis:64px;background:#0b141a;padding:0 16px;gap:13px}
+.headback{font-size:29px;width:20px;flex-basis:20px}
+.avatar{height:42px;width:42px;flex-basis:42px}
+.name{font-size:17px;font-weight:500}
+.verified{width:15px;height:15px;font-size:10px;background:#1689ef;color:white}
+.sub{display:none}
+.headicons{margin-left:auto;gap:0}
+.chat{padding:10px 12px 18px;background-color:#0b141a;background-image:url("data:image/svg+xml,%3Csvg width='240' height='240' viewBox='0 0 240 240' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' stroke='%231d2a30' stroke-width='1.6' opacity='.9'%3E%3Ccircle cx='35' cy='40' r='13'/%3E%3Cpath d='M25 40h20M35 30v20M83 23l12 18H71zM150 35q13-17 26 0t-13 18q-18-3-13-18zM20 130l20-10 10 20-20 10zM105 108q18-19 28 0l-13 17zM87 180h30m-15-15v30M6 76q12-15 24 0t-12 15zM174 166q12-15 24 0t-12 15zM196 88l20 10-10 20-20-10zM135 215l10-17 10 17zM48 205q15-15 27 0t-13 15z'/%3E%3C/g%3E%3C/svg%3E")}
+.row{margin:7px 0}
+.bubble{max-width:68%;min-width:90px;padding:9px 11px 6px;font-size:16px;line-height:1.34;border-radius:9px}
+.in .bubble{border-top-left-radius:0}
+.out .bubble{max-width:92%;border-top-right-radius:0}
+.bubble.ticket-bubble{width:68%;max-width:min(68vw,460px);min-width:0;padding:0;border-radius:8px;border-top-left-radius:0}
+.ticket-img-box img{width:100%;height:auto;object-fit:contain;background:#fff}
+.ticket-body{padding:12px 11px 8px}
+.notice{font-size:15px;line-height:1.42}
+.meta{font-size:11px;margin-top:5px;line-height:13px}
+.ticks{font-size:14px;color:#53bdeb}
+.options{gap:0;margin-top:9px;border-top:1px solid #303d45}
+.options:not(.vertical){flex-direction:column}
+.option{font-size:16px;padding:12px 10px;border-radius:0;background:#202c33;color:#25d366;border-bottom:1px solid #303d45}
+.options.vertical{border-top:1px solid #303d45}
+.options.vertical .option{font-size:16px;padding:13px 8px;background:#202c33;color:#25d366;border-bottom:1px solid #303d45}
+.option.primary{font-size:16px;padding:13px 10px;border:0;border-radius:0;background:#202c33;color:#25d366}
+.card{border-radius:8px;background:#1b2226;margin-top:2px}
+.cardbody{padding:12px}
+.orderid{font-size:12px;letter-spacing:1px;padding-bottom:10px}
+.item{font-size:17px;margin:12px 0 6px}
+.line{font-size:16px;margin:9px 0}
+.total{padding-top:11px;margin-top:11px}
+.route{font-size:16px;line-height:1.35;margin-top:12px}
+.linkbtn{font-size:16px;padding:15px 10px;color:#25d366}
+.smallcard{padding:10px;border-radius:8px}
+.smallcard .minihead{font-size:14px}
+.smallcard .minitext{font-size:14px}
+.validation-quote{padding:7px;gap:8px}
+.validation-quote-copy,.validation-quote-title,.validation-quote-caption{font-size:12px}
+.composer{gap:7px;padding:7px 9px calc(7px + env(safe-area-inset-bottom));background:#0b141a;min-height:67px}
+.composeicon{font-size:27px;color:#aebac1;padding:0 2px}
+.inputwrap{background:#202c33;border-radius:26px;height:48px;padding:0 10px;gap:7px}
+.inputwrap input{font-size:17px;min-width:0}
+.inputwrap input::placeholder{color:#86969d}
+.inside-icon{flex:0 0 auto;border:0;background:transparent;color:#aebac1;font-size:23px;line-height:1;padding:2px;cursor:pointer}
+.camera-btn{font-size:21px}
+.send{height:48px;width:48px;flex-basis:48px;background:#25d366;color:#06352c;font-size:22px}
+.send.mic-mode #sendGlyph{font-size:21px}
+.datepill{font-size:12px}
+@media(min-width:700px){.app{height:100dvh;width:100vw;max-width:none}.chat{padding-left:16px;padding-right:16px}.bubble{max-width:68%}.bubble.ticket-bubble{max-width:min(68vw,460px)}}
+</style>
+</head>
+<body>
+<main class="app">
+ <header class="header">
+  <button class="headback" type="button" aria-label="Back">‹</button><button class="avatar profile-open" id="avatar" type="button" aria-label="Open business profile">KTC</button>
+  <div class="headtext profile-open" role="button" tabindex="0" aria-label="Open business profile"><div class="name"><span id="brandName">Delhi Transport Corporation</span><span class="verified" id="verified">✓</span></div><div class="sub" id="subtitle">Automated Booking Assistant</div></div>
+  <div class="headicons"><button id="settingsOpen" type="button" aria-label="More options" style="background:none;border:0;color:inherit;font-size:24px">⋮</button></div>
+ </header>
+ <section class="chat" id="chat"><div class="datepill" id="datepill">Today</div><div id="messages"></div></section>
+ <form class="composer" id="composer"><button type="button" class="composeicon emoji-btn" id="emoji" aria-label="Emoji">☻</button><div class="inputwrap"><input id="msg" placeholder="Message" autocomplete="off"><button type="button" class="inside-icon" id="attach" aria-label="Attach">📎</button><button type="button" class="inside-icon camera-btn" id="camera" aria-label="Camera">▣</button></div><button class="send" id="sendButton" type="submit" aria-label="Send"><span id="sendGlyph">➤</span></button></form>
+ 
+ <aside class="settings" id="settings">
+  <button class="close" id="close">×</button><h3>Customize Settings</h3><p>Change branding and booking details.</p>
+  <div class="field"><label>Business name</label><input id="cName" maxlength="70"></div>
+  <div class="field"><label>Subtitle / status</label><input id="cSub" maxlength="70"></div>
+  <div class="field"><label>Phone shown in welcome message</label><input id="cPhone" maxlength="20"></div>
+  <div class="field"><label>Business contact number (profile)</label><input id="cBusinessPhone" maxlength="30" placeholder="Add your business number"></div>
+  <div class="field"><label>Website (profile)</label><input id="cWebsite" maxlength="120" placeholder="https://example.com"></div>
+  <div class="field"><label>Business category</label><input id="cCategory" maxlength="60"></div>
+  <div class="settingrow"><div class="field"><label>Avatar initials</label><input id="cAvatar" maxlength="5"></div><div class="field"><label>Ticket fare</label><input id="cFare" maxlength="20"></div></div>
+  <div class="settingrow"><div class="field"><label>From</label><input id="cFrom" maxlength="60"></div><div class="field"><label>To</label><input id="cTo" maxlength="60"></div></div>
+  <div class="field"><label>Custom Image File Name (Optional, e.g. 1710.png)</label><input id="cCustomImg" placeholder="Leave empty for auto DDMM date"></div>
+  <div class="field"><label>Welcome / chatbot banner image</label><input id="cWelcome" type="file" accept="image/*"><small id="welcomeName" style="font-size:10px;color:#aebac1">No welcome image selected</small></div>
+  <div style="margin-top:14px;display:flex;gap:8px">
+    <button class="save" id="save" type="button">Save changes</button>
+    <button class="save" id="clearChat" type="button" style="background:#b74b37;color:white">Clear Chat</button>
+    <button class="save" id="reset" type="button" style="background:#3b4a52;color:white">Reset All</button>
+  </div>
+ </aside>
+ 
+ <section class="profile-screen" id="profileScreen" aria-label="Business profile" aria-hidden="true">
+   <div class="profile-topbar"><button id="profileBack" aria-label="Back">‹</button><span></span><button id="profileMenu" aria-label="More options">⋮</button></div>
+   <div class="profile-hero"><div class="profile-logo profile-open" id="profileLogo">KTC</div><h1><span id="profileName">Delhi Transport Corporation</span><span class="verified profile-verified">✓</span></h1><div class="profile-phone" id="profilePhone">Add business number in settings</div><button class="share-btn" id="shareBusiness">↗</button><div class="share-label">Share</div></div>
+   <div class="profile-list">
+     <div class="profile-item"><span class="profile-symbol">♧</span><div><div id="profileCategory">Travel and transport</div></div></div>
+     <div class="profile-item"><span class="profile-symbol">◎</span><div id="profileWebsite">Website not added</div></div>
+     <div class="profile-item"><span class="profile-symbol">♙</span><div>Add to contacts</div></div>
+     <div class="profile-item"><span class="profile-symbol">ⓘ</span><div><div>Business Account</div><small>WhatsApp Business-style demo profile</small></div></div>
+   </div>
+   <div class="media-section"><div class="media-heading">Media, links, and docs <span id="mediaCount">1　›</span></div><div class="media-gallery" id="mediaGallery"></div></div>
+   <div class="profile-list profile-extra">
+     <div class="profile-item"><span class="profile-symbol">▧</span><div><div>Manage storage</div><small id="storageSize">Ticket and chat media</small></div></div>
+     <div class="profile-item"><span class="profile-symbol">♧</span><div>Notifications</div></div>
+     <div class="profile-item"><span class="profile-symbol">▣</span><div>Media visibility</div></div>
+     <div class="profile-item"><span class="profile-symbol">♙</span><div class="profile-flex"><div><div>Chat lock</div><small>Lock and hide this chat on this device.</small></div><button class="profile-toggle" type="button" aria-label="Toggle chat lock"></button></div></div>
+     <div class="profile-item"><span class="profile-symbol">ⓘ</span><div><div>Security</div><small>This business uses a demo profile. It is not affiliated with any government transport corporation.</small></div></div>
+     <div class="profile-item"><span class="profile-symbol">◎</span><div class="profile-flex"><div>Translate messages</div><button class="profile-toggle" type="button" aria-label="Toggle translate messages"></button></div></div>
+   </div>
+   <div class="profile-section-label">No groups in common</div>
+   <div class="profile-item profile-action"><span class="profile-green">♟</span><div>Create group with <span id="profileGroupName">Delhi Transport Corporation</span></div></div>
+   <div class="profile-item profile-action"><span class="profile-green">♟</span><div>Add to groups</div></div>
+   <div class="profile-item profile-action"><span class="profile-symbol">▧</span><div>Add to list</div></div>
+   <div class="profile-item profile-danger"><span>⊘</span><div>Block business</div></div>
+   <div class="profile-item profile-danger"><span>☟</span><div>Report business</div></div>
+ </section>
+
+ <div class="media-modal" id="mediaModal">
+   <div class="media-bar">
+     <button id="modalClose">←</button>
+     <span style="font-size:14px;font-weight:600" id="mediaTitle">Delhi Transport Corporation</span>
+     <button style="font-size:20px">⋮</button>
+   </div>
+   <div class="media-content">
+     <img id="modalImg" src="" alt="Full view">
+   </div>
+ </div>
+
+ <div class="toast" id="toast" hidden></div>
+</main>
+
+<script>
+(()=>{
+const $=id=>document.getElementById(id), chat=$('chat'), messages=$('messages'), input=$('msg'), panel=$('settings'), toast=$('toast');
+
+const defaults={
+  name:'Delhi Transport Corporation',
+  sub:'Automated Booking Assistant',
+  avatar:'KTC',
+  phone:'918171262801',
+  businessPhone:'',
+  website:'',
+  category:'Travel and transport',
+  fare:'₹22.85',
+  from:'Hyatt Hotel (Gail)',
+  to:'Gtb Nagar',
+  customImg:'',
+  welcomeImage:'',
+  welcomeName:''
+};
+
+let cfg={...defaults};
+let chatStore=[];
+
+// Optional cloud persistence. Add your Supabase project URL and anon key here after setup.
+// Until configured, transactions are saved on this device in localStorage.
+const BACKEND = { url: 'YOUR_SUPABASE_PROJECT_URL', anonKey: 'YOUR_SUPABASE_ANON_KEY' };
+const TX_KEY = 'ktc_saved_transactions_v1';
+const RETENTION_MS = 4 * 60 * 60 * 1000; // keep/show transaction data for 4 hours
+
+const pad=n=>String(n).padStart(2,'0');
+const now=()=>{const d=new Date();return pad(d.getHours())+':'+pad(d.getMinutes())};
+const genOrderId=()=>'EZV'+new Date().toISOString().replace(/[-:T.Z]/g,'').slice(0,14)+Math.floor(100000+Math.random()*900000);
+let currentOrderId = genOrderId();
+let lastTicketHtml = '';
+let ticketCreated = false;
+
+function getDateImageName(){
+  if(cfg.customImg && cfg.customImg.trim()) return cfg.customImg.trim();
+  const d = new Date();
+  return pad(d.getDate()) + pad(d.getMonth() + 1);
+}
+
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function scroll(){requestAnimationFrame(()=>chat.scrollTop=chat.scrollHeight)}
+if($('initialTime')) $('initialTime').textContent=now();
+
+function apply(){
+  $('brandName').textContent=cfg.name;
+  $('subtitle').textContent=cfg.sub;
+  $('profileName').textContent=cfg.name; $('profileGroupName').textContent=cfg.name; $('mediaTitle').textContent=cfg.name+' Ticket View';
+  $('profilePhone').textContent=cfg.businessPhone && cfg.businessPhone.trim() ? cfg.businessPhone : 'Add business number in settings';
+  $('profileCategory').textContent=cfg.category||'Travel and transport';
+  const web=$('profileWebsite'); if(cfg.website && cfg.website.trim()){web.innerHTML='';const a=document.createElement('a');a.href=cfg.website.startsWith('http')?cfg.website:'https://'+cfg.website;a.textContent=cfg.website;a.target='_blank';a.rel='noopener';web.appendChild(a)}else{web.textContent='Website not added'}
+  const avatar=$('avatar');
+  avatar.innerHTML=`<img src="profile.png" alt="Profile" onerror="if(!this.dataset.j){this.dataset.j='1';this.src='profile.jpg'}else if(this.dataset.j==='1'){this.dataset.j='2';this.src='profile.jpeg'}else if(this.dataset.j==='2'){this.dataset.j='3';this.src='profile.webp'}else{this.parentNode.textContent='${esc(cfg.avatar)}'}">`;
+  $('profileLogo').innerHTML=`<img src="profile.png" alt="Business profile" onerror="if(!this.dataset.j){this.dataset.j='1';this.src='profile.jpg'}else if(this.dataset.j==='1'){this.dataset.j='2';this.src='profile.jpeg'}else if(this.dataset.j==='2'){this.dataset.j='3';this.src='profile.webp'}else{this.parentNode.textContent='${esc(cfg.avatar)}'}">`;
+  renderMediaGallery();
+}
+
+function saveLocal(){
+  try{localStorage.setItem('ktc_chat_sim_cfg',JSON.stringify(cfg))}catch(e){}
+}
+
+function saveChatToStorage(){
+  try{localStorage.setItem('ktc_chat_history',JSON.stringify(chatStore))}catch(e){}
+}
+
+function readTransactions(){
+  try {
+    const v=JSON.parse(localStorage.getItem(TX_KEY)||'[]');
+    const list=Array.isArray(v)?v:[];
+    const cutoff=Date.now()-RETENTION_MS;
+    const fresh=list.filter(t=>t && t.bookedAt && Date.parse(t.bookedAt)>=cutoff);
+    if(fresh.length!==list.length) localStorage.setItem(TX_KEY,JSON.stringify(fresh));
+    return fresh;
+  } catch(e) { return []; }
+}
+function retentionCutoffISO(){ return new Date(Date.now()-RETENTION_MS).toISOString(); }
+async function purgeExpiredCloudTransactions(){
+  if(!cloudReady()) return;
+  try {
+    await fetch(BACKEND.url.replace(/\/$/, '')+'/rest/v1/ktc_transactions?booked_at=lt.'+encodeURIComponent(retentionCutoffISO()), {
+      method:'DELETE', headers:{'apikey':BACKEND.anonKey,'Authorization':'Bearer '+BACKEND.anonKey,'Prefer':'return=minimal'}
+    });
+  } catch(e) {}
+}
+function cloudReady(){ return BACKEND.url.startsWith('https://') && !BACKEND.url.includes('YOUR_SUPABASE') && BACKEND.anonKey && !BACKEND.anonKey.includes('YOUR_SUPABASE'); }
+async function syncTransactionToBackend(tx){
+  if(!cloudReady()) return false;
+  try {
+    const res=await fetch(BACKEND.url.replace(/\/$/, '')+'/rest/v1/ktc_transactions', {
+      method:'POST', headers:{'Content-Type':'application/json','apikey':BACKEND.anonKey,'Authorization':'Bearer '+BACKEND.anonKey,'Prefer':'resolution=merge-duplicates,return=minimal'},
+      body:JSON.stringify({order_id:tx.orderId,business_name:tx.businessName,booked_at:tx.bookedAt,fare:tx.fare,origin:tx.from,destination:tx.to,status:tx.status})
+    });
+    return res.ok;
+  } catch(e) { return false; }
+}
+async function getCloudLastTransaction(){
+  if(!cloudReady()) return null;
+  try {
+    await purgeExpiredCloudTransactions();
+    const url=BACKEND.url.replace(/\/$/, '')+'/rest/v1/ktc_transactions?select=order_id,business_name,booked_at,fare,origin,destination,status&booked_at=gte.'+encodeURIComponent(retentionCutoffISO())+'&order=booked_at.desc&limit=1';
+    const res=await fetch(url,{headers:{'apikey':BACKEND.anonKey,'Authorization':'Bearer '+BACKEND.anonKey}});
+    if(!res.ok) return null; const rows=await res.json(); if(!rows.length) return null; const r=rows[0];
+    return {orderId:r.order_id,businessName:r.business_name,bookedAt:r.booked_at,fare:r.fare,from:r.origin,to:r.destination,status:r.status};
+  } catch(e) { return null; }
+}
+async function saveTransaction(){
+  const list=readTransactions();
+  let tx=list.find(t=>t.orderId===currentOrderId);
+  if(!tx){
+    const d=new Date();
+    tx={orderId:currentOrderId,businessName:cfg.name,bookedAt:d.toISOString(),time:pad(d.getHours())+':'+pad(d.getMinutes()),date:pad(d.getDate())+'/'+pad(d.getMonth()+1)+'/'+d.getFullYear(),fare:cfg.fare,from:cfg.from,to:cfg.to,status:'Order complete'};
+    list.unshift(tx);
+    try{localStorage.setItem(TX_KEY,JSON.stringify(list.slice(0,100)));}catch(e){}
+    // Save locally immediately, and to Supabase when configured.
+    await purgeExpiredCloudTransactions();
+    await syncTransactionToBackend(tx);
+  }
+  return tx;
+}
+
+function stamp(type, timeStr){
+  return `<div class="meta"><span>${timeStr||now()}</span>${type==='out'?'<span class="ticks">✓✓</span>':''}</div>`;
+}
+
+function add(type, html, buttons, record=true, customTime=null, isTicket=false){
+  const timeUsed = customTime || now();
+  let row=document.createElement('div');row.className='row '+type;
+  let b=document.createElement('div');
+  b.className='bubble' + (isTicket ? ' ticket-bubble' : '');
+  b.innerHTML=html+stamp(type, timeUsed);
+  row.appendChild(b);
+  messages.appendChild(row);
+
+  if(buttons && buttons.length){
+    let opts=document.createElement('div');
+    opts.className='options';
+    if(buttons[0] && buttons[0].vertical) opts.classList.add('vertical');
+    if(isTicket) opts.style.padding = '0 10px 8px';
+    buttons.forEach(o=>{
+      let btn=document.createElement('button');
+      btn.className='option'+(o.primary?' primary':'');
+      btn.textContent=o.label;
+      btn.onclick=()=>{
+        btn.classList.add('selected');
+        btn.disabled=true;
+        if(o.actionKey && actionMap[o.actionKey]) actionMap[o.actionKey]();
+        else if(o.action) o.action();
+      };
+      opts.appendChild(btn);
+    });
+    b.appendChild(opts);
+  }
+
+  if(record){
+    const serializableButtons = buttons ? buttons.map(b=>({label:b.label, primary:!!b.primary, actionKey:b.actionKey||''})) : [];
+    chatStore.push({type, html, buttons:serializableButtons, time:timeUsed, isTicket:!!isTicket});
+    saveChatToStorage();
+  }
+
+  scroll();
+  return b;
+}
+
+function out(text){ add('out', esc(text)); }
+
+function typeIndicator(){
+  let r=document.createElement('div');r.className='row in';r.id='typing';
+  r.innerHTML='<div class="bubble"><span class="typing"><i></i><i></i><i></i></span></div>';
+  messages.appendChild(r);
+  $('subtitle').textContent='typing...';
+  scroll();
+}
+
+function bot(html, buttons, cb, isTicket=false){
+  typeIndicator();
+  setTimeout(()=>{
+    $('typing')?.remove();$('subtitle').textContent=cfg.sub;
+    add('in', html, buttons, true, null, isTicket);
+    if(cb) cb();
+  }, 400);
+}
+
+function getWelcomeHTML(){
+  const bannerImg=cfg.welcomeImage?`<img src="${cfg.welcomeImage}" alt="Banner" style="width:100%;display:block;border-radius:6px;margin-bottom:8px;background:#fff;object-fit:contain;">`:'';
+  return `${bannerImg}<div style="font-size:13px;line-height:1.5;">👋 <strong>Hi <span style="color:#00d989;">${esc(cfg.phone||'918171262801')}</span>,</strong><br><br>This is ${esc(cfg.name)} Automatic Reply Chatbot.<br><br>Please Choose your preferred language.<br>कृपया आपकी प्राथमिक भाषा चुनें.</div>`;
+}
+
+function menu(){
+  bot('Please select one of the options below to start. 👇',[
+    {label:'Book Ticket', actionKey:'book', vertical:true},
+    {label:'Download Ticket', actionKey:'downloadTicket', vertical:true},
+    {label:'Last Transaction', actionKey:'transactions', vertical:true}
+  ]);
+}
+
+function language(lang){
+  if(lang==='हिंदी'){
+    bot('भाषा चुनी गई। आगे बढ़ने के लिए नीचे दिए गए विकल्प चुनें।',[
+      {label:'टिकट बुक करें', actionKey:'book', vertical:true},
+      {label:'टिकट डाउनलोड करें', actionKey:'downloadTicket', vertical:true},
+      {label:'पिछला लेन-देन', actionKey:'transactions', vertical:true}
+    ]);
+  }else{
+    bot('Language selected. Click below to continue.',[
+      {label:'Book Ticket', actionKey:'book', vertical:true},
+      {label:'Download Ticket', actionKey:'downloadTicket', vertical:true},
+      {label:'Last Transaction', actionKey:'transactions', vertical:true}
+    ]);
+  }
+}
+
+function book(){
+  out('Book Ticket');
+  currentOrderId = genOrderId();
+  bot('Please click the link below to secure your ticket.',[
+    {label:'↗  Click Here', primary:true, actionKey:'orderCard'}
+  ]);
+}
+
+async function orderCard(){
+  // The Click Here quick-reply advances directly; it does not send an outgoing chat bubble.
+  const tx=await saveTransaction();
+  bot(`<div class="card"><div class="cardbody"><div class="orderid">ORDER #${esc(currentOrderId)}</div><div class="item">${esc(cfg.name)} Bus Ticket</div><div class="line"><span>Quantity</span><strong>1</strong></div><div class="line total"><span>Total</span><strong>${esc(cfg.fare)}</strong></div><div class="route">From ${esc(cfg.from)} To ${esc(cfg.to)}</div></div><div class="linkbtn action-view-details">View details</div></div>`,[]);
+}
+
+function details(){
+  // View details is an in-chat action: advance without sending an outgoing message.
+  bot(`<div class="smallcard"><div class="minihead">${esc(cfg.name)} <span style="color:#53bdeb">●</span></div><div class="minitext">▤ ${esc(cfg.name)} Bus Ticket<br>Quantity 1 • ${esc(cfg.fare)}</div></div><div class="notice"><strong>Status: Complete</strong><br>If you do not receive the ticket within 2 minutes and your payment was deducted, Try <strong>Download Ticket</strong> option in Main Menu, In case if ticket is still not received, refund will be processed in 3 to 5 days.</div>`,[],()=>{
+    bot('Use the link below to add your ticket to Google Wallet.',[
+      {label:'↗  Add Now', primary:true, actionKey:'ticket'}
+    ]);
+  });
+}
+
+function demoTicketSvg(){
+  const d=new Date(); const date=pad(d.getDate())+'/'+pad(d.getMonth()+1)+'/'+d.getFullYear();
+  const name=esc(cfg.name), from=esc(cfg.from), to=esc(cfg.to), fare=esc(cfg.fare);
+  const svg=`<svg xmlns="http://www.w3.org/2000/svg" width="700" height="980" viewBox="0 0 700 980"><rect width="700" height="980" fill="#f6f6f2"/><rect x="18" y="18" width="664" height="944" rx="12" fill="#fff" stroke="#172b58" stroke-width="7"/><text x="350" y="75" font-family="Arial" font-size="22" fill="#222" text-anchor="middle">DEMO BUS TICKET</text><text x="350" y="130" font-family="Arial" font-size="30" font-weight="700" fill="#111" text-anchor="middle">${name}</text><text x="350" y="165" font-family="Arial" font-size="18" fill="#555" text-anchor="middle">Passenger travel ticket • Demo only</text><line x1="45" y1="195" x2="655" y2="195" stroke="#bbb" stroke-dasharray="8 6"/><text x="55" y="250" font-family="Arial" font-size="18" fill="#555">DATE</text><text x="55" y="285" font-family="Arial" font-size="25" font-weight="700" fill="#111">${date}</text><text x="55" y="350" font-family="Arial" font-size="18" fill="#555">FROM</text><text x="55" y="385" font-family="Arial" font-size="25" font-weight="700" fill="#111">${from}</text><text x="380" y="350" font-family="Arial" font-size="18" fill="#555">TO</text><text x="380" y="385" font-family="Arial" font-size="25" font-weight="700" fill="#111">${to}</text><line x1="45" y1="420" x2="655" y2="420" stroke="#bbb" stroke-dasharray="8 6"/><text x="55" y="475" font-family="Arial" font-size="18" fill="#555">PASSENGERS</text><text x="55" y="510" font-family="Arial" font-size="25" font-weight="700" fill="#111">1</text><text x="380" y="475" font-family="Arial" font-size="18" fill="#555">FARE</text><text x="380" y="510" font-family="Arial" font-size="25" font-weight="700" fill="#111">${fare}</text><rect x="475" y="585" width="150" height="150" fill="#fff" stroke="#111" stroke-width="2"/>${Array.from({length:10},(_,i)=>`<rect x="${490+(i%5)*25}" y="${600+Math.floor(i/5)*65}" width="${i%3===0?18:10}" height="${i%2===0?45:30}" fill="#111"/>`).join('')}<text x="350" y="655" font-family="Arial" font-size="42" font-weight="700" fill="#b66b3a" text-anchor="middle" transform="rotate(-12 350 655)">DEMO</text><text x="350" y="850" font-family="Arial" font-size="22" fill="#444" text-anchor="middle">Not valid for real travel</text><text x="350" y="885" font-family="Arial" font-size="16" fill="#666" text-anchor="middle">Sample ticket for interface demonstration</text></svg>`;
+  return 'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);
+}
+
+function renderMediaGallery(){
+  const gallery=$('mediaGallery'); if(!gallery)return; gallery.innerHTML='';
+  const sources=[];
+  if(cfg.welcomeImage) sources.push({src:cfg.welcomeImage,alt:'Business welcome image'});
+  const ticketImg=document.querySelector('.ticket-img-box img');
+  sources.push({src:ticketImg && ticketImg.src && !ticketImg.src.startsWith('about:')?ticketImg.src:demoTicketSvg(),alt:'Demo ticket'});
+  $('mediaCount').textContent=sources.length+'　›';
+  sources.forEach(item=>{const img=document.createElement('img');img.src=item.src;img.alt=item.alt;img.onclick=()=>window.openPopup(item.src);gallery.appendChild(img)});
+}
+
+function ticket(){
+  // Add Now is an in-chat action only; do not create an outgoing user message.
+  const baseName = getDateImageName(); // DDMM, e.g. 1610 for 16 October
+  const candidates = baseName.includes('.')
+    ? [baseName]
+    : [`${baseName}.png`]; // Date-based ticket images are PNG only (DDMM.png)
+  const candidateJson = JSON.stringify(candidates);
+  const ticketHtml = `
+    <div class="ticket-img-box" onclick="openPopup(this.querySelector('img').src)">
+      <img class="ticket-img" src="${esc(candidates[0])}" data-candidates='${esc(candidateJson)}' data-index="0"
+           alt="${esc(cfg.name)} ticket for ${esc(baseName)}"
+           onerror="tryNextTicketImage(this)">
+    </div>
+    <div class="ticket-body">
+      <div class="notice" style="font-size:12.5px;line-height:1.45;color:#e9edef;">
+        <div style="font-size:14px;font-weight:700;margin-bottom:8px;">✅ Ticket Booked Successfully</div>
+        <strong>🔒 Validation Required:</strong><br>This ticket must be validated by the conductor by clicking on "Conductor Validation" button below. Self-validation is not allowed.<br><br>
+        <strong>🕒 Important:</strong><br>The ticket must be validated <strong>within 120 minutes</strong> of creation.<br><br>
+        After that, it will <strong>expire automatically</strong> and <strong>cannot be used</strong>.<br><br>
+        📌 Please show this ticket to the conductor for validation.<br><br>
+        ⚠️ Ticket can't be reused once validated.
+      </div>
+    </div>`;
+  lastTicketHtml = ticketHtml;
+  ticketCreated = true;
+  bot(ticketHtml,[{label:'Conductor Validation',primary:true,actionKey:'validate'}],()=>renderMediaGallery(),true);
+}
+function tryNextTicketImage(img){
+  try{
+    const list=JSON.parse(img.dataset.candidates||'[]');
+    const next=Number(img.dataset.index||0)+1;
+    if(next<list.length){img.dataset.index=String(next);img.src=list[next];return;}
+    img.onerror=null;
+    img.alt='Demo ticket for '+cfg.name;
+    img.src=demoTicketSvg();
+    renderMediaGallery();
+  }catch(e){img.onerror=null;}
+}
+function validate(){
+  // Send a WhatsApp-style quoted reply preview of the ticket message,
+  // followed by the "Conductor Validation" text as shown in the reference.
+  const ticketImage = document.querySelector('.ticket-img-box img');
+  const imageSrc = ticketImage ? ticketImage.getAttribute('src') : '';
+  const thumb = imageSrc
+    ? `<img src="${esc(imageSrc)}" alt="Ticket preview" onerror="this.style.display='none'">`
+    : `<div style="width:52px;min-width:52px;height:58px;background:#fff;color:#153e33;display:grid;place-items:center;font-size:22px;border-radius:2px">🚌</div>`;
+  const replyHtml = `<div class="validation-quote">
+      <div class="validation-quote-copy">
+        <div class="validation-quote-title">${esc(cfg.name)} <span style="color:#53bdeb">●</span></div>
+        <div class="validation-quote-caption">▣ ✅ Ticket Booked Successfully<br>…</div>
+      </div>${thumb}
+    </div><div>Conductor Validation</div>`;
+  add('out', replyHtml);
+  const allBtns = document.querySelectorAll('.option.primary');
+  allBtns.forEach(b=>{
+    if(b.textContent.includes('Conductor Validation')){
+      b.textContent = '✓ Validated';
+      b.style.background = '#153e33';
+      b.style.color = '#00a884';
+      b.disabled = true;
+    }
+  });
+  saveChatToStorage();
+}
+
+function downloadTicket(){
+  out('Download Ticket');
+  if(ticketCreated && lastTicketHtml){
+    bot(lastTicketHtml,[{label:'Conductor Validation',primary:true,actionKey:'validate'}],()=>renderMediaGallery(),true);
+  }else{
+    bot('No ticket has been generated yet. Please book your ticket first.',[
+      {label:'🚌  Book Ticket', actionKey:'book', vertical:true},
+      {label:'▤  Last Transaction', actionKey:'transactions', vertical:true}
+    ]);
+  }
+}
+
+async function transactions(){
+  out('Last Transaction');
+  const local=readTransactions();
+  const cloud=await getCloudLastTransaction();
+  const tx=cloud || local[0] || null;
+  if(!tx){
+    bot('No saved transaction yet. Choose Book Ticket to create your first demo transaction.',[
+      {label:'Book Ticket', actionKey:'book', vertical:true},
+      {label:'Download Ticket', actionKey:'downloadTicket', vertical:true}
+    ]);
+    return;
+  }
+  const dateLabel=tx.date || (tx.bookedAt ? new Date(tx.bookedAt).toLocaleString() : 'Saved on this device');
+  bot(`<div class="card"><div class="cardbody"><div class="orderid">LAST TRANSACTION • ${esc(dateLabel)}</div><div class="item">${esc(tx.businessName||cfg.name)} Bus Ticket</div><div class="line"><span>Reference</span><strong>${esc(tx.orderId)}</strong></div><div class="line"><span>Time booked</span><strong>${esc(tx.time || (tx.bookedAt ? new Date(tx.bookedAt).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}) : 'Saved'))}</strong></div><div class="line"><span>Route</span><strong>${esc(tx.from||cfg.from)} → ${esc(tx.to||cfg.to)}</strong></div><div class="line"><span>Total</span><strong>${esc(tx.fare||cfg.fare)}</strong></div><div class="line"><span>Status</span><strong style="color:#25d366">${esc(tx.status||'Order complete')}</strong></div></div></div>`,[
+    {label:'Download Ticket', actionKey:'downloadTicket', vertical:true},
+    {label:'Book Ticket', actionKey:'book', vertical:true}
+  ]);
+}
+
+const actionMap={
+  'book': book,
+  'orderCard': orderCard,
+  'ticket': ticket,
+  'validate': validate,
+  'downloadTicket': downloadTicket,
+  'transactions': transactions,
+  'lang_en': ()=>language('English'),
+  'lang_hi': ()=>language('हिंदी')
+};
+
+window.openPopup = function(src){
+  $('modalImg').src = src;
+  $('mediaModal').classList.add('open');
+};
+$('modalClose').onclick = ()=>$('mediaModal').classList.remove('open');
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){$('mediaModal').classList.remove('open');closeProfile();panel.classList.remove('open')}});
+$('mediaModal').onclick = (e)=>{ if(e.target===$('mediaModal'))$('mediaModal').classList.remove('open'); };
+
+document.addEventListener('click', e=>{
+  const target = e.target && e.target.closest ? e.target.closest('.action-view-details') : null;
+  if(target){ e.preventDefault(); details(); }
+});
+
+function send(text){
+  const clean=(text||'').trim();
+  if(!clean) return;
+  out(clean);
+  input.value='';
+  const normalized=clean.toLowerCase();
+  if(['hi','hii','hello','hey','namaste','नमस्ते'].includes(normalized)){
+    bot(getWelcomeHTML(),[
+      {label:'↶  English', actionKey:'lang_en', vertical:true},
+      {label:'↶  हिंदी', actionKey:'lang_hi', vertical:true}
+    ]);
+  }else if(normalized==='english' || normalized==='en'){
+    language('English');
+  }else if(normalized==='hindi' || normalized==='हिंदी'){
+    language('हिंदी');
+  }else if(normalized.includes('click here')){
+    orderCard();
+  }else if(normalized.includes('view details')){
+    details();
+  }else if(normalized.includes('add now')){
+    ticket();
+  }else if(normalized.includes('conductor validation')){
+    validate();
+  }else if(normalized.includes('book ticket') || normalized==='book'){
+    book();
+  }else if(normalized.includes('download')){
+    downloadTicket();
+  }else if(normalized.includes('transaction')){
+    transactions();
+  }else{
+    bot('Please type “Hi” to start, or choose a language below.',[
+      {label:'↶  English', actionKey:'lang_en', vertical:true},
+      {label:'↶  हिंदी', actionKey:'lang_hi', vertical:true}
+    ]);
+  }
+}
+
+$('composer').addEventListener('submit',e=>{e.preventDefault();if(input.value.trim())send(input.value);else notify('Voice message is a visual demo only.')});$('emoji').onclick=()=>{input.value+='🙂';input.focus()};
+$('attach').onclick=()=>notify('Attachment picker is a demo feature.');$('camera').onclick=()=>notify('Camera is a visual demo feature.');
+input.addEventListener('input',()=>{const b=$('sendButton'),g=$('sendGlyph');if(input.value.trim()){b.classList.remove('mic-mode');g.textContent='➤';b.setAttribute('aria-label','Send')}else{b.classList.add('mic-mode');g.textContent='🎙';b.setAttribute('aria-label','Voice message')}});$('sendButton').classList.add('mic-mode');$('sendGlyph').textContent='🎙';
+function notify(s){toast.textContent=s;toast.hidden=false;setTimeout(()=>toast.hidden=true,2000)}
+
+function openProfile(){renderMediaGallery();$('profileScreen').scrollTop=0;$('profileScreen').classList.add('open');$('profileScreen').setAttribute('aria-hidden','false')}
+function closeProfile(){$('profileScreen').classList.remove('open');$('profileScreen').setAttribute('aria-hidden','true')}
+document.querySelectorAll('.profile-open').forEach(el=>{el.addEventListener('click',openProfile);el.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openProfile()}})});
+$('profileBack').onclick=closeProfile;
+$('avatar').style.cursor='pointer';$('avatar').addEventListener('click',openProfile);$('brandName').style.cursor='pointer';$('brandName').addEventListener('click',openProfile);
+$('profileMenu').onclick=()=>{closeProfile();formFill();panel.classList.add('open')};
+$('shareBusiness').onclick=()=>{const text=`${cfg.name}${cfg.businessPhone?' • '+cfg.businessPhone:''}`;if(navigator.share)navigator.share({title:cfg.name,text}).catch(()=>{});else if(navigator.clipboard)navigator.clipboard.writeText(text).then(()=>notify('Business details copied')).catch(()=>notify(text));else notify(text)};
+document.querySelectorAll('.profile-toggle').forEach(btn=>btn.addEventListener('click',()=>btn.classList.toggle('on')));
+document.querySelectorAll('.profile-item').forEach(item=>{if(item.textContent.includes('Add to contacts'))item.style.cursor='pointer';item.addEventListener('click',()=>{if(item.textContent.includes('Add to contacts')){const details=`${cfg.name}${cfg.businessPhone?'\n'+cfg.businessPhone:''}${cfg.website?'\n'+cfg.website:''}`;if(navigator.clipboard)navigator.clipboard.writeText(details).then(()=>notify('Business contact details copied')).catch(()=>notify(details));else notify(details)}})});
+$('profileScreen').addEventListener('click',e=>{if(e.target.closest('.profile-danger'))notify('Demo profile: this action is not connected to WhatsApp.')});
+
+function formFill(){
+  $('cName').value=cfg.name;$('cSub').value=cfg.sub;$('cPhone').value=cfg.phone||defaults.phone; $('cBusinessPhone').value=cfg.businessPhone||''; $('cWebsite').value=cfg.website||''; $('cCategory').value=cfg.category||defaults.category;
+  $('cAvatar').value=cfg.avatar;$('cFare').value=cfg.fare;$('cFrom').value=cfg.from;
+  $('cTo').value=cfg.to;$('cCustomImg').value=cfg.customImg||'';$('welcomeName').textContent=cfg.welcomeName||(cfg.welcomeImage?'Saved welcome image selected':'No welcome image selected');
+}
+$('settingsOpen').onclick=()=>{formFill();panel.classList.toggle('open')};$('close').onclick=()=>panel.classList.remove('open');
+
+function bindWelcomeImagePicker(){
+  const picker=$('cWelcome');
+  if(!picker) return;
+  picker.addEventListener('change',e=>{
+    const file=e.target.files && e.target.files[0];
+    if(!file) return;
+    if(!file.type.startsWith('image/')){notify('Please choose an image file.');picker.value='';return;}
+    if(file.size>500*1024){notify('Please choose an image under 500 KB for local browser storage.');picker.value='';return;}
+    const reader=new FileReader();
+    reader.onload=()=>{
+      cfg.welcomeImage=String(reader.result);
+      cfg.welcomeName=file.name;
+      $('welcomeName').textContent='Selected: '+file.name+' — click Save changes';
+    };
+    reader.onerror=()=>notify('Could not read this image.');
+    reader.readAsDataURL(file);
+  });
+}
+bindWelcomeImagePicker();
+
+$('save').onclick=()=>{
+  cfg.name=$('cName').value.trim()||defaults.name;
+  cfg.sub=$('cSub').value.trim()||defaults.sub;
+  cfg.phone=$('cPhone').value.trim()||defaults.phone; cfg.businessPhone=$('cBusinessPhone').value.trim(); cfg.website=$('cWebsite').value.trim(); cfg.category=$('cCategory').value.trim()||defaults.category;
+  cfg.avatar=$('cAvatar').value.trim()||'KTC';
+  cfg.fare=$('cFare').value.trim()||defaults.fare;
+  cfg.from=$('cFrom').value.trim()||defaults.from;
+  cfg.to=$('cTo').value.trim()||defaults.to;
+  cfg.customImg=$('cCustomImg').value.trim();
+  saveLocal();apply();panel.classList.remove('open');notify('Changes saved');
+};
+
+$('clearChat').onclick=()=>{
+  localStorage.removeItem('ktc_chat_history');
+  location.reload();
+};
+
+$('reset').onclick=()=>{
+  localStorage.clear();
+  location.reload();
+};
+
+try{
+  const old=localStorage.getItem('ktc_chat_sim_cfg');
+  if(old)cfg={...defaults,...JSON.parse(old)};
+}catch(e){}
+
+apply();
+formFill();
+
+// Restore saved chat history on app reopen; do not delete it at startup.
+try {
+  const savedHistory = JSON.parse(localStorage.getItem('ktc_chat_history') || '[]');
+  if (Array.isArray(savedHistory)) {
+    chatStore = savedHistory;
+    savedHistory.forEach(item => {
+      if (!item || !item.type || typeof item.html !== 'string') return;
+      const buttons = Array.isArray(item.buttons)
+        ? item.buttons.map(b => ({
+            label: b.label || '',
+            primary: !!b.primary,
+            actionKey: b.actionKey || ''
+          }))
+        : [];
+      add(item.type, item.html, buttons, false, item.time || null, !!item.isTicket);
+      if (item.isTicket) {
+        ticketCreated = true;
+        lastTicketHtml = item.html;
+      }
+    });
+  }
+} catch (e) {
+  chatStore = [];
+}
+
+scroll();
+if('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('./sw.js', {scope: './'}).catch(()=>{});
+})();
+</script>
+</body>
+</html>
