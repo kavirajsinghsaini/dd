@@ -1,8 +1,8 @@
 {
   "id": "./",
-  "name": "Kaviraj Transport Corporation",
-  "short_name": "Kaviraj Transport",
-  "description": "Kaviraj Transport Corporation booking chat simulator",
+  "name": "Delhi Transport Corporation",
+  "short_name": "Delhi Transport",
+  "description": "Delhi Transport Corporation booking chat simulator",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
