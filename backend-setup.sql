@@ -1,4 +1,4 @@
--- KAVIRAJ TRANSPORT CORPORATION demo simulator only.
+-- Delhi TRANSPORT CORPORATION demo simulator only.
 -- Run this entire script in Supabase SQL Editor.
 -- The app hides and attempts to delete transactions older than 5 hours.
 -- Public demo policy: do not store real customer/payment/sensitive data.
