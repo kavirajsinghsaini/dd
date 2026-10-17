@@ -7,12 +7,12 @@
 <link rel="manifest" href="./manifest.webmanifest">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Kaviraj Transport">
+<meta name="apple-mobile-web-app-title" content="Delhi Transport">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <link rel="apple-touch-icon" href="./icon-192.png">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>Kaviraj Transport Corporation — Chat Simulator</title>
+<title>Delhi Transport Corporation — Chat Simulator</title>
 <style>
 :root{--bg:#0b141a;--header:#202c33;--incoming:#202c33;--outgoing:#005c4b;--green:#00a884;--text:#e9edef;--muted:#aebac1;--line:#303d45}
 *{box-sizing:border-box}html,body{margin:0;width:100%;height:100%;background:#111b21;color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;scrollbar-width:none}html::-webkit-scrollbar,body::-webkit-scrollbar{display:none;width:0;height:0}body{display:block;overflow:hidden}
@@ -135,7 +135,7 @@ html,body{background:#0b141a}
 <main class="app">
  <header class="header">
   <button class="headback" type="button" aria-label="Back">‹</button><button class="avatar profile-open" id="avatar" type="button" aria-label="Open business profile">KTC</button>
-  <div class="headtext profile-open" role="button" tabindex="0" aria-label="Open business profile"><div class="name"><span id="brandName">Kaviraj Transport Corporation</span><span class="verified" id="verified">✓</span></div><div class="sub" id="subtitle">Automated Booking Assistant</div></div>
+  <div class="headtext profile-open" role="button" tabindex="0" aria-label="Open business profile"><div class="name"><span id="brandName">Delhi Transport Corporation</span><span class="verified" id="verified">✓</span></div><div class="sub" id="subtitle">Automated Booking Assistant</div></div>
   <div class="headicons"><button id="settingsOpen" type="button" aria-label="More options" style="background:none;border:0;color:inherit;font-size:24px">⋮</button></div>
  </header>
  <section class="chat" id="chat"><div class="datepill" id="datepill">Today</div><div id="messages"></div></section>
@@ -162,7 +162,7 @@ html,body{background:#0b141a}
  
  <section class="profile-screen" id="profileScreen" aria-label="Business profile" aria-hidden="true">
    <div class="profile-topbar"><button id="profileBack" aria-label="Back">‹</button><span></span><button id="profileMenu" aria-label="More options">⋮</button></div>
-   <div class="profile-hero"><div class="profile-logo profile-open" id="profileLogo">KTC</div><h1><span id="profileName">Kaviraj Transport Corporation</span><span class="verified profile-verified">✓</span></h1><div class="profile-phone" id="profilePhone">Add business number in settings</div><button class="share-btn" id="shareBusiness">↗</button><div class="share-label">Share</div></div>
+   <div class="profile-hero"><div class="profile-logo profile-open" id="profileLogo">KTC</div><h1><span id="profileName">Delhi Transport Corporation</span><span class="verified profile-verified">✓</span></h1><div class="profile-phone" id="profilePhone">Add business number in settings</div><button class="share-btn" id="shareBusiness">↗</button><div class="share-label">Share</div></div>
    <div class="profile-list">
      <div class="profile-item"><span class="profile-symbol">♧</span><div><div id="profileCategory">Travel and transport</div></div></div>
      <div class="profile-item"><span class="profile-symbol">◎</span><div id="profileWebsite">Website not added</div></div>
@@ -179,7 +179,7 @@ html,body{background:#0b141a}
      <div class="profile-item"><span class="profile-symbol">◎</span><div class="profile-flex"><div>Translate messages</div><button class="profile-toggle" type="button" aria-label="Toggle translate messages"></button></div></div>
    </div>
    <div class="profile-section-label">No groups in common</div>
-   <div class="profile-item profile-action"><span class="profile-green">♟</span><div>Create group with <span id="profileGroupName">Kaviraj Transport Corporation</span></div></div>
+   <div class="profile-item profile-action"><span class="profile-green">♟</span><div>Create group with <span id="profileGroupName">Delhi Transport Corporation</span></div></div>
    <div class="profile-item profile-action"><span class="profile-green">♟</span><div>Add to groups</div></div>
    <div class="profile-item profile-action"><span class="profile-symbol">▧</span><div>Add to list</div></div>
    <div class="profile-item profile-danger"><span>⊘</span><div>Block business</div></div>
@@ -189,7 +189,7 @@ html,body{background:#0b141a}
  <div class="media-modal" id="mediaModal">
    <div class="media-bar">
      <button id="modalClose">←</button>
-     <span style="font-size:14px;font-weight:600" id="mediaTitle">Kaviraj Transport Corporation</span>
+     <span style="font-size:14px;font-weight:600" id="mediaTitle">Delhi Transport Corporation</span>
      <button style="font-size:20px">⋮</button>
    </div>
    <div class="media-content">
@@ -205,7 +205,7 @@ html,body{background:#0b141a}
 const $=id=>document.getElementById(id), chat=$('chat'), messages=$('messages'), input=$('msg'), panel=$('settings'), toast=$('toast');
 
 const defaults={
-  name:'Kaviraj Transport Corporation',
+  name:'Delhi Transport Corporation',
   sub:'Automated Booking Assistant',
   avatar:'KTC',
   phone:'918171262801',
